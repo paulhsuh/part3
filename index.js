@@ -26,6 +26,10 @@ let persons = [
 const app = express()
 app.use(express.json())
 
+const duplicateName = (name) => {
+  return persons.find( person => person.name === name)
+}
+
 app.get('/', (request, response) => {
   response.send("<h1>Hello world</h1>")
 })
@@ -66,8 +70,14 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  if (!(body.name || body.person) ) {
-    return response.status(404).end()
+  if (!body.name) {
+    return response.status(404).json({error:'no name provided'})
+  }
+  else if (!body.number) {
+    return response.status(404).json({error:'no number provided'})
+  }
+  else if(duplicateName(body.name)) {
+    return response.status(404).json({error:'name must be unique'})
   }
 
   const person = {
