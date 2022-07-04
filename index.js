@@ -26,7 +26,22 @@ let persons = [
 
 const app = express()
 app.use(express.json())
-app.use(morgan('tiny'))
+
+morgan.token('data', function (req, res) {return JSON.stringify(req.body)})
+
+app.use(morgan(function (tokens, req, res) {
+  const log = [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms'
+  ]
+  if (req.method === 'POST'){
+    log.push(tokens.data(req, res))
+  }
+  return log.join(' ')
+}))
 
 const duplicateName = (name) => {
   return persons.find( person => person.name === name)
