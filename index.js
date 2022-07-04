@@ -1,4 +1,5 @@
 const express = require('express')
+var morgan = require('morgan')
 
 let persons = [
   { 
@@ -25,6 +26,7 @@ let persons = [
 
 const app = express()
 app.use(express.json())
+app.use(morgan('tiny'))
 
 const duplicateName = (name) => {
   return persons.find( person => person.name === name)
