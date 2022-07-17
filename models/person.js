@@ -4,16 +4,16 @@ const url = process.env.MONGODB_URI
 
 function isPositiveInt(input) {
 
-  const number = Number(input);
+  const number = Number(input)
   if (Number.isInteger(number) && number > 0) {
-    return true;
+    return true
   }
-  return false;
+  return false
 }
 
 mongoose
   .connect(url)
-  .then(result => console.log('connected to MongoDB'))
+  .then(() => console.log('connected to MongoDB'))
   .catch(error => console.log('error connecting to MongoDB', error.message))
 
 const personSchema = new mongoose.Schema({
@@ -25,9 +25,9 @@ const personSchema = new mongoose.Schema({
   number: {
     type: String,
     minLength: 8,
-    validate:{ 
+    validate:{
       validator: function (v) {
-        const parts = v.split("-")
+        const parts = v.split('-')
         if (parts.length === 2) {
           const partOne = parts[0]
           const partTwo = parts[1]
@@ -37,7 +37,7 @@ const personSchema = new mongoose.Schema({
         }
         return false
       },
-    }, 
+    },
     required: true
   }
 })

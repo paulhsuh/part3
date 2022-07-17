@@ -19,16 +19,14 @@ const Phone = mongoose.model('Phone', phoneSchema)
 
 mongoose
   .connect(url)
-  .then( (result) => {
+  .then( () => {
     if (process.argv[3] && process.argv[4]) {
       const name = process.argv[3]
       const number = process.argv[4]
-    
       const newPhone = new Phone({
         name: name,
         number: number
       })
-    
       newPhone
         .save()
         .then( () => {
@@ -43,7 +41,7 @@ mongoose
           return result.map( (phone) => `${phone.name} ${phone.number}`)
         })
         .then( lines => {
-          console.log("phonebook:")
+          console.log('phonebook:')
           console.log(lines.join('\n'))
           mongoose.connection.close()
         })
@@ -52,4 +50,3 @@ mongoose
   .catch( (error) => {
     console.log(error)
   })
-  

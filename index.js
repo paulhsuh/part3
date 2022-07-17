@@ -4,13 +4,12 @@ const cors = require('cors')
 var morgan = require('morgan')
 const Person = require('./models/person')
 
-
 const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(express.static('build'))
 
-morgan.token('data', function (req, res) {return JSON.stringify(req.body)})
+morgan.token('data', function (req) {return JSON.stringify(req.body)})
 
 app.use(morgan(function (tokens, req, res) {
   const log = [
@@ -27,9 +26,9 @@ app.use(morgan(function (tokens, req, res) {
 }))
 
 const duplicateName = (name) => {
-  let duplicated;
+  let duplicated
   Person
-    .findOne({name: name})
+    .findOne({ name: name })
     .then( (person) => duplicated = Boolean(person))
     .catch( error => console.error(error.message))
   return duplicated
@@ -46,15 +45,15 @@ app.get('/info', (request, response, next) => {
   Person
     .count()
     .then( length => {
-    const info = `
-    <p>
-    Phonebook has info for ${length} people.
-    </p>
-    <p>
-    ${Date()}
-    </p>
-    `
-    response.send(info)
+      const info = `
+      <p>
+      Phonebook has info for ${length} people.
+      </p>
+      <p>
+      ${Date()}
+      </p>
+      `
+      response.send(info)
     })
     .catch(error => next(error))
 })
@@ -69,14 +68,14 @@ app.get('/api/persons/:id', (request, response, next) => {
       }
       response.json(person)
     })
-    .catch(error=>next(error))
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   Person
     .findByIdAndRemove(id)
-    .then( (result) => response.status(204).end())
+    .then( () => response.status(204).end())
     .catch(error => next(error))
 })
 
@@ -97,13 +96,13 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name) {
-    return response.status(404).json({error:'no name provided'})
+    return response.status(404).json({ error:'no name provided' })
   }
   else if (!body.number) {
-    return response.status(404).json({error:'no number provided'})
+    return response.status(404).json({ error:'no number provided' })
   }
   else if(duplicateName(body.name)){
-    return response.status(404).json({error:'name must be unique'})
+    return response.status(404).json({ error:'name must be unique' })
   }
 
   const person =new Person({
@@ -130,7 +129,7 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   }
   else if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message})
+    return response.status(400).json({ error: error.message })
   }
   next(error)
 }
